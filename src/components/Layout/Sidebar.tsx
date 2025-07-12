@@ -136,8 +136,22 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNewChat }) => {
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-      {/* Header */}
-      <Box sx={{ p: 2 }}>
+      {/* Brand Header */}
+      <Box sx={{ p: 3, textAlign: 'center' }}>
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: 700,
+            background: 'linear-gradient(135deg, #ff0000 0%, #ffffff 100%)',
+            backgroundClip: 'text',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            mb: 3,
+          }}
+        >
+          sixtyoneeighty
+        </Typography>
+
         <GradientButton
           fullWidth
           gradient="primary"
@@ -193,7 +207,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNewChat }) => {
                     </Box>
                   }
                   secondary={
-                    <Typography variant="caption" sx={{ opacity: 0.6 }}>
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        opacity: 0.6,
+                        textAlign: 'center',
+                        display: 'block',
+                        width: '100%'
+                      }}
+                    >
                       {new Date(chat.updated_at).toLocaleDateString()}
                     </Typography>
                   }

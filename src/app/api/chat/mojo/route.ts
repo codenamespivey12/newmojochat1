@@ -117,6 +117,15 @@ When using tools, do so with your characteristic wit and sarcasm. Make jokes abo
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if OpenAI API key is available
+    if (!process.env.OPENAI_API_KEY) {
+      console.error('OPENAI_API_KEY is not set');
+      return NextResponse.json(
+        { error: 'OpenAI API key not configured' },
+        { status: 500 }
+      );
+    }
+
     const body = await request.json();
     const { messages, stream = false, userId } = body;
 
@@ -146,13 +155,13 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Prepare messages with personalized system instruction
-    const systemMessage = {
-      role: 'system',
-      content: createMojoSystemInstruction(userProfile),
-    };
+    // Prepare system instruction for Responses API
+    const systemInstruction = createMojoSystemInstruction(userProfile);
 
-    const chatMessages = [systemMessage, ...messages];
+    // Format messages for Responses API - convert to simple text format
+    const conversationText = messages.map(msg =>
+      `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`
+    ).join('\n\n');
 
     // Configure tools for image generation, code interpreter, and remote MCP servers
     const tools = [
@@ -179,14 +188,17 @@ export async function POST(request: NextRequest) {
 
     if (stream) {
       // Streaming response using Responses API
+      console.log('Creating streaming response with Responses API...');
       const response = await openai.responses.create({
         model: 'gpt-4.1',
-        input: chatMessages,
+        input: conversationText,
+        instructions: systemInstruction,
         tools: tools,
         stream: true,
         temperature: 0.7,
         max_output_tokens: 2000,
       });
+      console.log('Streaming response created successfully');
 
       // Create a ReadableStream for streaming response
       const encoder = new TextEncoder();
@@ -252,7 +264,8 @@ export async function POST(request: NextRequest) {
       // Non-streaming response using Responses API
       const response = await openai.responses.create({
         model: 'gpt-4.1',
-        input: chatMessages,
+        input: conversationText,
+        instructions: systemInstruction,
         tools: tools,
         temperature: 0.7,
         max_output_tokens: 2000,
@@ -293,7 +306,13 @@ export async function POST(request: NextRequest) {
     }
   } catch (error: any) {
     console.error('Mojo API Error:', error);
-    
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      status: error.status,
+      stack: error.stack
+    });
+
     if (error.code === 'insufficient_quota') {
       return NextResponse.json(
         { error: 'API quota exceeded. Please try again later.' },

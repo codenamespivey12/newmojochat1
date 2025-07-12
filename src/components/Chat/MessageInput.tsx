@@ -113,8 +113,8 @@ export const MessageInput: React.FC<MessageInputProps> = ({
     <Box
       sx={{
         ...glassStyles.glass,
-        p: 2,
-        borderRadius: '20px',
+        p: 1.5,
+        borderRadius: '16px',
         border: '1px solid rgba(255, 255, 255, 0.2)',
         '&:focus-within': {
           borderColor: model === 'mojo++' ? 'rgba(255, 0, 0, 0.5)' : 'rgba(255, 255, 255, 0.4)',
@@ -122,15 +122,7 @@ export const MessageInput: React.FC<MessageInputProps> = ({
         },
       }}
     >
-      {/* Model Selector */}
-      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'center' }}>
-        <ModelSelector
-          value={model}
-          onChange={onModelChange}
-          disabled={disabled}
-          size="small"
-        />
-      </Box>
+
 
       {/* File Attachments */}
       {attachments.length > 0 && (

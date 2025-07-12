@@ -454,7 +454,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       <Divider sx={{ opacity: 0.3 }} />
 
       {/* Input Area */}
-      <Box sx={{ p: 3 }}>
+      <Box sx={{ p: 2 }}>
         <MessageInput
           value={inputValue}
           onChange={setInputValue}

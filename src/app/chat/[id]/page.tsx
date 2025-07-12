@@ -119,7 +119,7 @@ export default function ChatPage() {
   }
 
   return (
-    <MainLayout>
+    <MainLayout model={chat.model} onModelChange={handleModelChange}>
       <Box
         sx={{
           height: 'calc(100vh - 64px)',

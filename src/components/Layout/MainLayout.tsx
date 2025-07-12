@@ -37,9 +37,11 @@ const DRAWER_WIDTH = 280;
 
 interface MainLayoutProps {
   children: React.ReactNode;
+  model?: 'mojo' | 'mojo++';
+  onModelChange?: (model: 'mojo' | 'mojo++') => void;
 }
 
-export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
+export const MainLayout: React.FC<MainLayoutProps> = ({ children, model, onModelChange }) => {
   const theme = useTheme();
   const router = useRouter();
   const { sidebarOpen, toggleSidebar, closeSidebar, isMobile } = useNavigation();
@@ -71,6 +73,8 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         onMenuClick={toggleSidebar}
         sidebarOpen={sidebarOpen}
         onProfileEdit={handleProfileEdit}
+        model={model}
+        onModelChange={onModelChange}
       />
 
       {/* Sidebar */}

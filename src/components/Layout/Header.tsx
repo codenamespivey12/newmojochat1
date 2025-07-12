@@ -21,18 +21,23 @@ import {
 } from '@mui/icons-material';
 import { glassStyles } from '@/theme/theme';
 import { signOut, getCurrentUser } from '@/lib/supabase';
+import { ModelSelector } from '@/components/UI/ModelSelector';
 import { useRouter } from 'next/navigation';
 
 interface HeaderProps {
   onMenuClick: () => void;
   sidebarOpen: boolean;
   onProfileEdit: () => void;
+  model?: 'mojo' | 'mojo++';
+  onModelChange?: (model: 'mojo' | 'mojo++') => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   onMenuClick,
   sidebarOpen,
   onProfileEdit,
+  model,
+  onModelChange,
 }) => {
   const theme = useTheme();
   const router = useRouter();
@@ -157,8 +162,19 @@ export const Header: React.FC<HeaderProps> = ({
             </Typography>
           </Box>
 
-          {/* Right side - User menu */}
+          {/* Right side - Model selector and User menu */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            {/* Model Selector */}
+            {model && onModelChange && (
+              <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+                <ModelSelector
+                  value={model}
+                  onChange={onModelChange}
+                  size="small"
+                />
+              </Box>
+            )}
+
             <IconButton
               size="large"
               aria-label="account of current user"

@@ -149,13 +149,13 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Prepare messages with personalized system instruction
-    const systemMessage = {
-      role: 'system',
-      content: createMojoPlusSystemInstruction(userName),
-    };
+    // Prepare system instruction for Responses API
+    const systemInstruction = createMojoPlusSystemInstruction(userName);
 
-    const chatMessages = [systemMessage, ...messages];
+    // Format messages for Responses API - convert to simple text format
+    const conversationText = messages.map(msg =>
+      `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`
+    ).join('\n\n');
 
     // Configure tools for image generation, code interpreter, and remote MCP servers
     const tools = [
@@ -183,7 +183,8 @@ export async function POST(request: NextRequest) {
     // Use O3 model with reasoning effort parameter and tools
     const modelConfig = {
       model: 'o3-mini' as const,
-      input: chatMessages,
+      input: conversationText,
+      instructions: systemInstruction,
       tools: tools,
       reasoning: {
         effort: 'high' as const,

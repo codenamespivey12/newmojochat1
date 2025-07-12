@@ -123,7 +123,11 @@ export class PreferencesManager {
 
   // Get cached preferences
   static getCachedPreferences(): AllPreferences {
-    return this.cache || DEFAULT_PREFERENCES;
+    if (!this.cache) {
+      // Initialize cache with defaults if not loaded yet
+      this.cache = DEFAULT_PREFERENCES;
+    }
+    return this.cache;
   }
 
   // Update specific preference category
