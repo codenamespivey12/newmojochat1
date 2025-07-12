@@ -173,10 +173,17 @@ export async function POST(request: NextRequest) {
     // Prepare system instruction for Responses API
     const systemInstruction = createMojoSystemInstruction(userProfile);
 
-    // Format messages for Responses API - convert to simple text format
-    const conversationText = messages.map(msg =>
-      `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`
-    ).join('\n\n');
+    // Format messages for Responses API - include system message in input array
+    const inputMessages = [
+      {
+        role: 'system',
+        content: systemInstruction
+      },
+      ...messages.map(msg => ({
+        role: msg.role,
+        content: msg.content
+      }))
+    ];
 
     // Configure tools for image generation, code interpreter, and remote MCP servers
     const tools = [
@@ -209,8 +216,7 @@ export async function POST(request: NextRequest) {
       console.log('Creating streaming response with Responses API...');
       const response = await openai.responses.create({
         model: 'gpt-4.1',
-        input: conversationText,
-        instructions: systemInstruction,
+        input: inputMessages,
         tools: tools,
         stream: true,
         temperature: 0.7,
@@ -226,15 +232,15 @@ export async function POST(request: NextRequest) {
             for await (const chunk of response) {
               const chunkAny = chunk as any;
 
-              // Handle text deltas
-              if (chunkAny.type?.includes('text.delta') || chunkAny.delta) {
-                const content = chunkAny.delta || chunkAny.content || '';
+              // Handle text deltas from Responses API
+              if (chunkAny.type === 'response.output_text.delta') {
+                const content = chunkAny.delta || '';
                 if (content) {
                   controller.enqueue(encoder.encode(`data: ${JSON.stringify({ content })}\n\n`));
                 }
               }
               // Handle completion
-              else if (chunkAny.type?.includes('done') || chunkAny.type === 'response.done') {
+              else if (chunkAny.type === 'response.done') {
                 controller.enqueue(encoder.encode('data: [DONE]\n\n'));
               }
               // Handle tool calls (image generation, code interpreter, MCP)
@@ -282,8 +288,7 @@ export async function POST(request: NextRequest) {
       // Non-streaming response using Responses API
       const response = await openai.responses.create({
         model: 'gpt-4.1',
-        input: conversationText,
-        instructions: systemInstruction,
+        input: inputMessages,
         tools: tools,
         temperature: 0.7,
         max_output_tokens: 2000,
