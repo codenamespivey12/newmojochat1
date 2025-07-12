@@ -1,0 +1,73 @@
+{
+  "mcpServers": {
+    "exa": {
+      "type": "remote",
+      "server_url": "https://mcp.exa.ai/mcp?exaApiKey=c69ad329-ded7-44fe-903a-42c355ad759d",
+      "server_label": "exa",
+      "require_approval": "never",
+      "description": "Exa search and content retrieval server (remote)"
+    },
+    "context7": {
+      "type": "remote",
+      "server_url": "https://mcp.context7.com/mcp",
+      "server_label": "context7",
+      "require_approval": "never",
+      "description": "Context7 library documentation server (remote)"
+    },
+    "sequential-thinking": {
+      "type": "local",
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-sequential-thinking"],
+      "description": "Sequential thinking and reasoning server (local - no remote available)"
+    }
+  },
+  "tools": {
+    "exa_search": {
+      "server": "exa",
+      "description": "Search the web using Exa API",
+      "parameters": {
+        "query": "string (required)",
+        "numResults": "number (optional, default: 10)",
+        "includeDomains": "array of strings (optional)",
+        "excludeDomains": "array of strings (optional)",
+        "startCrawlDate": "string YYYY-MM-DD (optional)",
+        "endCrawlDate": "string YYYY-MM-DD (optional)"
+      }
+    },
+    "exa_get_contents": {
+      "server": "exa",
+      "description": "Get full content from URLs",
+      "parameters": {
+        "urls": "array of strings (required)"
+      }
+    },
+    "context7_resolve_library": {
+      "server": "context7",
+      "description": "Resolve library name to Context7 ID",
+      "parameters": {
+        "libraryName": "string (required)"
+      }
+    },
+    "context7_get_docs": {
+      "server": "context7",
+      "description": "Get library documentation",
+      "parameters": {
+        "libraryId": "string (required)",
+        "topic": "string (optional)",
+        "tokens": "number (optional, default: 10000)"
+      }
+    },
+    "sequential_thinking": {
+      "server": "sequential-thinking",
+      "description": "Use sequential thinking for complex reasoning",
+      "parameters": {
+        "thought": "string (required)",
+        "thoughtNumber": "number (optional)",
+        "totalThoughts": "number (optional)",
+        "nextThoughtNeeded": "boolean (optional)",
+        "isRevision": "boolean (optional)",
+        "revisesThought": "number (optional)"
+      }
+    }
+  }
+}
