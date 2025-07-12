@@ -185,7 +185,7 @@ export async function POST(request: NextRequest) {
         tools: tools,
         stream: true,
         temperature: 0.7,
-        max_completion_tokens: 2000,
+        max_output_tokens: 2000,
       });
 
       // Create a ReadableStream for streaming response
@@ -255,7 +255,7 @@ export async function POST(request: NextRequest) {
         input: chatMessages,
         tools: tools,
         temperature: 0.7,
-        max_completion_tokens: 2000,
+        max_output_tokens: 2000,
       });
 
       // Extract text content and tool results

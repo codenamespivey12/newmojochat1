@@ -190,7 +190,7 @@ export async function POST(request: NextRequest) {
         summary: 'auto' as const // auto gives you the best available summary (detailed > auto > None)
       },
       temperature: 0.3, // Lower temperature for more consistent reasoning
-      max_completion_tokens: 4000,
+      max_output_tokens: 4000,
     };
 
     if (stream) {
