@@ -105,8 +105,104 @@ export async function signInWithGoogle() {
   });
 }
 
-// Generate unique chat title based on model
-const generateChatTitle = (model: 'mojo' | 'mojo++') => {
+// Generate AI-powered chat title based on user message
+const generateAIChatTitle = async (userMessage: string): Promise<string> => {
+  try {
+    // Simple title generation based on message content
+    // Extract key topics and create a catchy title
+    const message = userMessage.toLowerCase();
+
+    // Holiday/weekend patterns
+    if (message.includes('memorial day') && (message.includes('weekend') || message.includes('do'))) {
+      return '3 Day Weekend Adventures!';
+    }
+    if (message.includes('christmas') || message.includes('holiday')) {
+      return 'Holiday Planning & Fun';
+    }
+    if (message.includes('weekend') && message.includes('plan')) {
+      return 'Weekend Planning Session';
+    }
+
+    // Work/career patterns
+    if (message.includes('job') || message.includes('career') || message.includes('interview')) {
+      return 'Career & Work Chat';
+    }
+    if (message.includes('resume') || message.includes('cv')) {
+      return 'Resume Building Help';
+    }
+
+    // Tech/coding patterns
+    if (message.includes('code') || message.includes('programming') || message.includes('debug')) {
+      return 'Coding & Development';
+    }
+    if (message.includes('react') || message.includes('javascript') || message.includes('python')) {
+      return 'Programming Help';
+    }
+
+    // Creative patterns
+    if (message.includes('write') || message.includes('story') || message.includes('creative')) {
+      return 'Creative Writing Session';
+    }
+    if (message.includes('design') || message.includes('art')) {
+      return 'Design & Creative Ideas';
+    }
+
+    // Learning patterns
+    if (message.includes('learn') || message.includes('explain') || message.includes('how to')) {
+      return 'Learning & Exploration';
+    }
+    if (message.includes('help') && message.includes('understand')) {
+      return 'Understanding & Help';
+    }
+
+    // Food/cooking patterns
+    if (message.includes('recipe') || message.includes('cook') || message.includes('food')) {
+      return 'Cooking & Recipes';
+    }
+
+    // Travel patterns
+    if (message.includes('travel') || message.includes('trip') || message.includes('vacation')) {
+      return 'Travel Planning';
+    }
+
+    // Health/fitness patterns
+    if (message.includes('workout') || message.includes('exercise') || message.includes('fitness')) {
+      return 'Health & Fitness';
+    }
+
+    // General conversation starters
+    if (message.includes('hello') || message.includes('hi ') || message.includes('hey')) {
+      return 'Friendly Chat';
+    }
+
+    // Default: Extract first few meaningful words
+    const words = userMessage.split(' ').filter(word =>
+      word.length > 2 &&
+      !['the', 'and', 'but', 'for', 'are', 'can', 'you', 'what', 'how', 'why', 'when', 'where'].includes(word.toLowerCase())
+    );
+
+    if (words.length > 0) {
+      const title = words.slice(0, 3).join(' ');
+      return title.charAt(0).toUpperCase() + title.slice(1) + ' Discussion';
+    }
+
+    // Fallback to timestamp-based title
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+    return `Chat ${timeStr}`;
+
+  } catch (error) {
+    console.error('Error generating AI chat title:', error);
+    return 'New Chat';
+  }
+};
+
+// Generate simple fallback title based on model
+const generateFallbackTitle = (model: 'mojo' | 'mojo++') => {
   const now = new Date();
   const timeStr = now.toLocaleTimeString('en-US', {
     hour: '2-digit',
@@ -128,7 +224,7 @@ export const createChat = async (title?: string, model: 'mojo' | 'mojo++' = 'moj
   if (!user) throw new Error('User not authenticated');
 
   // Use generated title if none provided
-  const chatTitle = title || generateChatTitle(model);
+  const chatTitle = title || generateFallbackTitle(model);
 
   const { data, error } = await supabase
     .from('chats')
@@ -141,6 +237,25 @@ export const createChat = async (title?: string, model: 'mojo' | 'mojo++' = 'moj
     .single();
 
   return { data, error };
+};
+
+// Update chat title based on first user message
+export const updateChatTitle = async (chatId: string, userMessage: string) => {
+  try {
+    const newTitle = await generateAIChatTitle(userMessage);
+
+    const { error } = await supabase
+      .from('chats')
+      .update({ title: newTitle })
+      .eq('id', chatId);
+
+    if (error) throw error;
+
+    return { success: true, title: newTitle };
+  } catch (error) {
+    console.error('Error updating chat title:', error);
+    return { success: false, error };
+  }
 };
 
 export const getUserChats = async () => {

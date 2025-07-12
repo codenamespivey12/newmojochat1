@@ -6,7 +6,7 @@ import { MessageBubble } from './MessageBubble';
 import { MessageInput } from './MessageInput';
 import { MessageEditor } from './MessageEditor';
 import { TypingIndicator, LoadingSpinner } from '@/components/UI';
-import { Message, getChatMessages, addMessage, getCurrentUser } from '@/lib/supabase';
+import { Message, getChatMessages, addMessage, getCurrentUser, updateChatTitle } from '@/lib/supabase';
 import { useAI, AIService } from '@/lib/ai';
 import { realtimeService, RealtimeEvent } from '@/lib/realtime';
 import { useStreaming, createStreamingMessage, updateStreamingMessage } from '@/lib/streaming';
@@ -141,6 +141,16 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       );
 
       if (userError) throw userError;
+
+      // Update chat title if this is the first user message
+      if (messages.length === 0) {
+        try {
+          await updateChatTitle(chatId, content);
+        } catch (titleError) {
+          console.error('Error updating chat title:', titleError);
+          // Don't throw - title update failure shouldn't stop the conversation
+        }
+      }
 
       // Note: Real-time subscription will handle adding the message to the UI
 

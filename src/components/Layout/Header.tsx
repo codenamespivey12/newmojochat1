@@ -14,7 +14,7 @@ import {
   useTheme,
 } from '@mui/material';
 import {
-  Menu as MenuIcon,
+  ArrowBack as ArrowBackIcon,
   AccountCircle,
   Logout,
   Settings,
@@ -123,7 +123,7 @@ export const Header: React.FC<HeaderProps> = ({
               edge="start"
               onClick={onMenuClick}
             >
-              <MenuIcon />
+              <ArrowBackIcon />
             </IconButton>
           </Box>
 
