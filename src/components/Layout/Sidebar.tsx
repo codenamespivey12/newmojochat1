@@ -68,10 +68,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNewChat }) => {
   };
 
   const handleCreateChat = async () => {
-    if (!newChatTitle.trim()) return;
-
     try {
-      const { data, error } = await createChat(newChatTitle, newChatModel);
+      // Use custom title if provided, otherwise auto-generate
+      const title = newChatTitle.trim() || undefined;
+      const { data, error } = await createChat(title, newChatModel);
       if (error) throw error;
       
       setNewChatDialogOpen(false);
@@ -291,7 +291,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNewChat }) => {
           <TextField
             autoFocus
             margin="dense"
-            label="Chat Title"
+            label="Chat Title (Optional)"
+            placeholder="Leave empty for auto-generated title"
             fullWidth
             variant="outlined"
             value={newChatTitle}
@@ -332,7 +333,6 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNewChat }) => {
           <Button
             onClick={handleCreateChat}
             variant="contained"
-            disabled={!newChatTitle.trim()}
           >
             Create
           </Button>

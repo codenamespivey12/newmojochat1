@@ -46,6 +46,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ open, onClose, user 
   // Personalization fields
   const [location, setLocation] = useState('');
   const [interests, setInterests] = useState<string[]>([]);
+  const [interestsText, setInterestsText] = useState(''); // Temporary text state
   const [age, setAge] = useState<number | ''>('');
   const [occupation, setOccupation] = useState('');
   const [hobbies, setHobbies] = useState('');
@@ -81,6 +82,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ open, onClose, user 
           if (data && !error) {
             setLocation(data.location || '');
             setInterests(data.interests || []);
+            setInterestsText((data.interests || []).join(', '));
             setAge(data.age || '');
             setOccupation(data.occupation || '');
             setHobbies(data.hobbies || '');
@@ -112,6 +114,12 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ open, onClose, user 
 
       if (authError) throw authError;
 
+      // Parse interests from text
+      const parsedInterests = interestsText
+        .split(',')
+        .map(i => i.trim())
+        .filter(i => i.length > 0);
+
       // Update user record in database with all profile fields
       const { error: dbError } = await supabase
         .from('users')
@@ -119,7 +127,7 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ open, onClose, user 
           full_name: fullName,
           avatar_url: avatarUrl,
           location: location || null,
-          interests: interests.length > 0 ? interests : [],
+          interests: parsedInterests.length > 0 ? parsedInterests : [],
           age: age || null,
           occupation: occupation || null,
           hobbies: hobbies || null,
@@ -274,8 +282,8 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ open, onClose, user 
               <TextField
                 fullWidth
                 label="Interests"
-                value={interests.join(', ')}
-                onChange={(e) => setInterests(e.target.value.split(',').map(i => i.trim()).filter(i => i))}
+                value={interestsText}
+                onChange={(e) => setInterestsText(e.target.value)}
                 placeholder="e.g., Technology, Music, Travel, Cooking"
                 helperText="Separate multiple interests with commas"
                 sx={{ mb: 2 }}

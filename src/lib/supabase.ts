@@ -105,16 +105,36 @@ export async function signInWithGoogle() {
   });
 }
 
+// Generate unique chat title based on model
+const generateChatTitle = (model: 'mojo' | 'mojo++') => {
+  const now = new Date();
+  const timeStr = now.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  });
+  const dateStr = now.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric'
+  });
+
+  const modelName = model === 'mojo' ? 'GPT-4.1' : 'O3-Mini';
+  return `${modelName} Chat - ${dateStr} ${timeStr}`;
+};
+
 // Chat helpers
-export const createChat = async (title: string, model: 'mojo' | 'mojo++') => {
+export const createChat = async (title?: string, model: 'mojo' | 'mojo++' = 'mojo') => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('User not authenticated');
+
+  // Use generated title if none provided
+  const chatTitle = title || generateChatTitle(model);
 
   const { data, error } = await supabase
     .from('chats')
     .insert({
       user_id: user.id,
-      title,
+      title: chatTitle,
       model,
     })
     .select()

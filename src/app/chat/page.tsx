@@ -35,8 +35,8 @@ export default function ChatPage() {
 
   const handleNewChat = async (model: 'mojo' | 'mojo++') => {
     try {
-      const title = `New ${model === 'mojo' ? 'Mojo' : 'Mojo++'} Chat`;
-      const { data, error } = await createChat(title, model);
+      // Let createChat generate a unique title automatically
+      const { data, error } = await createChat(undefined, model);
       
       if (error) throw error;
       
@@ -86,7 +86,7 @@ export default function ChatPage() {
             Welcome to sixtyoneeighty
           </Typography>
           <Typography variant="h6" sx={{ opacity: 0.8, mb: 4 }}>
-            Choose your AI model to start a conversation
+            Pick one of our AI Assistants to begin.
           </Typography>
         </Box>
 
@@ -120,10 +120,10 @@ export default function ChatPage() {
               Mojo
             </Typography>
             <Typography variant="body1" sx={{ opacity: 0.8, mb: 3 }}>
-              Powered by GPT-4.1
+              Powered by Mojo
             </Typography>
             <Typography variant="body2" sx={{ opacity: 0.6, mb: 3 }}>
-              Fast, efficient, and perfect for most conversations. Great for general questions, creative writing, and everyday tasks.
+              Wise cracking, ball busting assistant, capable of hanling most questions. He's the daily driver. 
             </Typography>
             <GradientButton
               gradient="secondary"
@@ -163,7 +163,7 @@ export default function ChatPage() {
               Mojo++
             </Typography>
             <Typography variant="body1" sx={{ opacity: 0.8, mb: 3 }}>
-              Powered by O3 Reasoning
+              If Mojo is the daily driver, Mojo++ is the lambo.
             </Typography>
             <Typography variant="body2" sx={{ opacity: 0.6, mb: 3 }}>
               Advanced reasoning capabilities for complex problems. Perfect for deep analysis, coding, mathematics, and challenging tasks.

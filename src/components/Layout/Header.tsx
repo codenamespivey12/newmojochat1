@@ -114,33 +114,17 @@ export const Header: React.FC<HeaderProps> = ({
           }),
         }}
       >
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <Toolbar sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          {/* Left side - Menu button */}
+          <Box sx={{ display: 'flex', alignItems: 'center', flex: 1 }}>
             <IconButton
               color="inherit"
               aria-label="toggle drawer"
               edge="start"
               onClick={onMenuClick}
-              sx={{ mr: 2 }}
             >
               <MenuIcon />
             </IconButton>
-            
-            {/* Brand Logo */}
-            <Typography
-              variant="h6"
-              noWrap
-              component="div"
-              sx={{
-                fontWeight: 700,
-                background: 'linear-gradient(135deg, #ff0000 0%, #ffffff 100%)',
-                backgroundClip: 'text',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              sixtyoneeighty
-            </Typography>
           </Box>
 
           {/* Center - Time and Date */}
@@ -149,21 +133,23 @@ export const Header: React.FC<HeaderProps> = ({
               display: { xs: 'none', sm: 'flex' },
               flexDirection: 'column',
               alignItems: 'center',
+              justifyContent: 'center',
               ...glassStyles.glass,
               px: 3,
               py: 1,
+              flex: 1,
             }}
           >
-            <Typography variant="h6" sx={{ fontWeight: 600 }}>
+            <Typography variant="h6" sx={{ fontWeight: 600, textAlign: 'center' }}>
               {formatTime(currentTime)}
             </Typography>
-            <Typography variant="caption" sx={{ opacity: 0.7 }}>
+            <Typography variant="caption" sx={{ opacity: 0.7, textAlign: 'center' }}>
               {formatDate(currentTime)}
             </Typography>
           </Box>
 
           {/* Right side - Model selector and User menu */}
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 2, flex: 1 }}>
             {/* Model Selector */}
             {model && onModelChange && (
               <Box sx={{ display: { xs: 'none', md: 'block' } }}>
