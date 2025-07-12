@@ -43,6 +43,7 @@ export interface Message {
     model?: string;
     tokens?: number;
     reasoning_effort?: string;
+    tool_calls?: any[];
     attachments?: Array<{
       name: string;
       type: string;
@@ -96,8 +97,6 @@ export const getCurrentUser = async () => {
 };
 
 export async function signInWithGoogle() {
-  const supabase = createClient();
-  
   return supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
