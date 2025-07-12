@@ -4,13 +4,14 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Box, Typography } from '@mui/material';
 import { Add as AddIcon, Chat as ChatIcon } from '@mui/icons-material';
+import { User } from '@supabase/supabase-js';
 import { MainLayout } from '@/components/Layout/MainLayout';
 import { getCurrentUser, createChat } from '@/lib/supabase';
 import { GlassCard, GradientButton, LoadingSpinner } from '@/components/UI';
 
 export default function ChatPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -123,7 +124,7 @@ export default function ChatPage() {
               Powered by Mojo
             </Typography>
             <Typography variant="body2" sx={{ opacity: 0.6, mb: 3 }}>
-              Wise cracking, ball busting assistant, capable of hanling most questions. He's the daily driver. 
+              Wise cracking, ball busting assistant, capable of handling most questions. He&apos;s the daily driver.
             </Typography>
             <GradientButton
               gradient="secondary"

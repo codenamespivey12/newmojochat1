@@ -159,7 +159,10 @@ export async function POST(request: NextRequest) {
 
     // Configure tools for image generation, code interpreter, and remote MCP servers
     const tools = [
-      { type: "image_generation" as const },
+      {
+        type: "image_generation" as const,
+        partial_images: 1 // Required for streaming
+      },
       {
         type: "code_interpreter" as const,
         container: { type: "auto" as const }

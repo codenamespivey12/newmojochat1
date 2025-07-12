@@ -30,7 +30,7 @@ import {
   Psychology as MojoPlusPlusIcon,
 } from '@mui/icons-material';
 import { glassStyles } from '@/theme/theme';
-import { getUserChats, createChat, Chat } from '@/lib/supabase';
+import { getUserChats, createChat, deleteChat, Chat } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { GradientButton, GlassCard } from '@/components/UI';
 
@@ -105,6 +105,28 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNewChat }) => {
   const handleChatMenuClose = () => {
     setMenuAnchor(null);
     setSelectedChat(null);
+  };
+
+  const handleDeleteChat = async () => {
+    if (!selectedChat) return;
+
+    try {
+      const { error } = await deleteChat(selectedChat.id);
+      if (error) throw error;
+
+      // Remove chat from local state
+      setChats(prev => prev.filter(chat => chat.id !== selectedChat.id));
+
+      // If we're currently viewing this chat, redirect to main chat page
+      if (selectedChatId === selectedChat.id) {
+        router.push('/chat');
+      }
+
+      handleChatMenuClose();
+    } catch (error) {
+      console.error('Error deleting chat:', error);
+      // TODO: Show error toast/notification
+    }
   };
 
   const getModelIcon = (model: 'mojo' | 'mojo++') => {
@@ -269,7 +291,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onNewChat }) => {
           <EditIcon sx={{ mr: 2, fontSize: 18 }} />
           Rename
         </MenuItem>
-        <MenuItem onClick={handleChatMenuClose} sx={{ color: 'error.main' }}>
+        <MenuItem onClick={handleDeleteChat} sx={{ color: 'error.main' }}>
           <DeleteIcon sx={{ mr: 2, fontSize: 18 }} />
           Delete
         </MenuItem>

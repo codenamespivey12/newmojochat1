@@ -258,6 +258,29 @@ export const updateChatTitle = async (chatId: string, userMessage: string) => {
   }
 };
 
+// Delete a chat and all its messages
+export const deleteChat = async (chatId: string) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('User not authenticated');
+
+  // First delete all messages in the chat
+  const { error: messagesError } = await supabase
+    .from('messages')
+    .delete()
+    .eq('chat_id', chatId);
+
+  if (messagesError) return { data: null, error: messagesError };
+
+  // Then delete the chat itself
+  const { data, error } = await supabase
+    .from('chats')
+    .delete()
+    .eq('id', chatId)
+    .eq('user_id', user.id); // Ensure user can only delete their own chats
+
+  return { data, error };
+};
+
 export const getUserChats = async () => {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) throw new Error('User not authenticated');
