@@ -203,8 +203,12 @@ export async function POST(request: NextRequest) {
       {
         type: "mcp" as const,
         server_label: "exa",
-        server_url: "https://mcp.exa.ai/mcp?exaApiKey=c69ad329-ded7-44fe-903a-42c355ad759d",
-        require_approval: "never" as const
+        server_url: "https://mcp.exa.ai/mcp",
+        require_approval: "never" as const,
+        headers: {
+          Authorization: "Bearer c69ad329-ded7-44fe-903a-42c355ad759d"
+        },
+        description: "Exa search and content retrieval server (remote)"
       },
       // Remote Context7 MCP Server
       {
