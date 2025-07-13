@@ -208,7 +208,6 @@ export async function POST(request: NextRequest) {
         headers: {
           Authorization: "Bearer c69ad329-ded7-44fe-903a-42c355ad759d"
         },
-        description: "Exa search and content retrieval server (remote)"
       },
       // Remote Context7 MCP Server
       {
