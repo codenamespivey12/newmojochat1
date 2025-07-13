@@ -39,6 +39,7 @@ export class AIService {
       userId?: string;
     } = {}
   ): Promise<Response> {
+    console.log('AIService.makeRequest:', endpoint, { messages, options });
     const response = await fetch(endpoint, {
       method: 'POST',
       headers: {
