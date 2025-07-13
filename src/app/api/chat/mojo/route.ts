@@ -141,7 +141,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const body = await request.json();
+    console.log('Mojo /api/chat/mojo called. method:', request.method);
+    const bodyText = await request.text();
+    console.log('Mojo /api/chat/mojo body:', bodyText);
+    const body = JSON.parse(bodyText);
     const { messages, stream = false, userId } = body;
 
     if (!messages || !Array.isArray(messages)) {
