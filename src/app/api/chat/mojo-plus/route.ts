@@ -7,10 +7,16 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Only create Supabase client if environment variables are properly set
+const supabase = process.env.NEXT_PUBLIC_SUPABASE_URL && 
+                 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+                 process.env.NEXT_PUBLIC_SUPABASE_URL !== 'your_supabase_url_here' &&
+                 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== 'your_supabase_anon_key_here'
+  ? createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    )
+  : null;
 
 // Function to create system instruction for Mojo++ (O3) with optional user name
 const createMojoPlusSystemInstruction = (userName?: string) => {

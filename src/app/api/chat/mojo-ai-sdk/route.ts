@@ -3,10 +3,16 @@ import { streamText, generateText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Only create Supabase client if environment variables are properly set
+const supabase = process.env.NEXT_PUBLIC_SUPABASE_URL && 
+                 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+                 process.env.NEXT_PUBLIC_SUPABASE_URL !== 'your_supabase_url_here' &&
+                 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== 'your_supabase_anon_key_here'
+  ? createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    )
+  : null;
 
 // MCP Tools configuration for AI SDK
 const mcpTools = {
