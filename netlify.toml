@@ -8,6 +8,21 @@
   NEXT_TELEMETRY_DISABLED = "1"
 
 [[redirects]]
+  from = "/api/chat/mojo"
+  to = "/.netlify/functions/chat-mojo"
+  status = 200
+
+[[redirects]]
+  from = "/api/chat/mojo-plus"
+  to = "/.netlify/functions/chat-mojo-plus"
+  status = 200
+
+[[redirects]]
+  from = "/api/mcp/test"
+  to = "/.netlify/functions/mcp-test"
+  status = 200
+
+[[redirects]]
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
