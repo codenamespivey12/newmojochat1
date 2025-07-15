@@ -225,7 +225,7 @@ const generateFallbackTitle = (model: 'mojo' | 'mojo++') => {
     day: 'numeric'
   });
 
-  const modelName = model === 'mojo' ? 'GPT-4.1' : 'O3-Mini';
+  const modelName = model === 'mojo' ? 'GPT-4.1' : 'O3';
   return `${modelName} Chat - ${dateStr} ${timeStr}`;
 };
 

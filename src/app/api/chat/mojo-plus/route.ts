@@ -188,7 +188,7 @@ export async function POST(request: NextRequest) {
 
     // Use O3 model with reasoning effort parameter and tools
     const modelConfig = {
-      model: 'o3-mini' as const,
+      model: 'o3' as const,
       input: conversationText,
       instructions: systemInstruction,
       tools: tools,
@@ -196,7 +196,7 @@ export async function POST(request: NextRequest) {
         effort: 'high' as const,
         summary: 'auto' as const // auto gives you the best available summary (detailed > auto > None)
       },
-      temperature: 0.3, // Lower temperature for more consistent reasoning
+      temperature: 0.7, // Lower temperature for more consistent reasoning
       max_output_tokens: 4000,
     };
 
@@ -298,7 +298,7 @@ export async function POST(request: NextRequest) {
         usage: response.usage,
         model: 'mojo++',
         metadata: {
-          model: 'o3-mini',
+          model: 'o3',
           reasoning_effort: 'high',
           reasoning_summary: (response as any).reasoning?.summary || null,
           tokens: response.usage?.total_tokens,

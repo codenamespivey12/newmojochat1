@@ -1,4 +1,4 @@
-// Netlify Function for Mojo++ Chat API (O3-mini)
+// Netlify Function for Mojo++ Chat API (O3)
 const OpenAI = require('openai');
 
 const openai = new OpenAI({
@@ -153,7 +153,7 @@ exports.handler = async (event, context) => {
 
     // Use O3 model with reasoning effort parameter and tools
     const modelConfig = {
-      model: 'o3-mini',
+      model: 'o3',
       input: conversationText,
       instructions: systemInstruction,
       tools: tools,
@@ -161,7 +161,7 @@ exports.handler = async (event, context) => {
         effort: 'high',
         summary: 'auto' // auto gives you the best available summary (detailed > auto > None)
       },
-      temperature: 0.3, // Lower temperature for more consistent reasoning
+      temperature: 0.7, // Lower temperature for more consistent reasoning
       max_output_tokens: 4000,
     };
 
@@ -200,7 +200,7 @@ exports.handler = async (event, context) => {
         usage: response.usage,
         model: 'mojo++',
         metadata: {
-          model: 'o3-mini',
+          model: 'o3',
           reasoning_effort: 'high',
           reasoning_summary: response.reasoning?.summary || null,
           tokens: response.usage?.total_tokens,
