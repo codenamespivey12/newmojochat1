@@ -137,9 +137,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Fetch user name if userId is provided
+    // Fetch user name if userId is provided and supabase is available
     let userName = null;
-    if (userId) {
+    if (userId && supabase) {
       try {
         const { data, error } = await supabase
           .from('users')

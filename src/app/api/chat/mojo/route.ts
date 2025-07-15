@@ -10,10 +10,16 @@ const openai = new OpenAI({
 // Import supabase for user profile data
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+// Only create Supabase client if environment variables are properly set
+const supabase = process.env.NEXT_PUBLIC_SUPABASE_URL && 
+                 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY &&
+                 process.env.NEXT_PUBLIC_SUPABASE_URL !== 'your_supabase_url_here' &&
+                 process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY !== 'your_supabase_anon_key_here'
+  ? createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    )
+  : null;
 
 // Function to create personalized system instruction for Mojo (GPT-4.1)
 const createMojoSystemInstruction = (userProfile?: any) => {
@@ -156,9 +162,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Fetch user profile data if userId is provided
+    // Fetch user profile data if userId is provided and supabase is available
     let userProfile = null;
-    if (userId) {
+    if (userId && supabase) {
       try {
         const { data, error } = await supabase
           .from('users')
