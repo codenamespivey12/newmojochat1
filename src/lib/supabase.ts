@@ -87,6 +87,9 @@ export const signUp = async (email: string, password: string, fullName?: string)
 };
 
 export const signIn = async (email: string, password: string) => {
+  if (!supabase) {
+    return { data: null, error: { message: 'Supabase not configured' } };
+  }
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
     password,
