@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import OpenAI from 'openai';
+import { getMCPTools, validateMCPConnection, getMCPErrorMessage } from '@/lib/mcp-config';
 export const runtime = 'edge';
 
 const openai = new OpenAI({
@@ -199,21 +200,17 @@ export async function POST(request: NextRequest) {
         type: "code_interpreter" as const,
         container: { type: "auto" as const }
       },
-      // Remote Exa MCP Server
-      {
-        type: "mcp" as const,
-        server_label: "exa",
-        server_url: "https://mcp.exa.ai/mcp?exaApiKey=c69ad329-ded7-44fe-903a-42c355ad759d",
-        require_approval: "never" as const,
-      },
-      // Remote Context7 MCP Server
-      {
-        type: "mcp" as const,
-        server_label: "context7",
-        server_url: "https://mcp.context7.com/mcp",
-        require_approval: "never" as const
-      }
+      // Add MCP tools with validation
+      ...getMCPTools()
     ];
+
+    // Validate MCP connections and log warnings
+    const mcpTools = getMCPTools();
+    for (const tool of mcpTools) {
+      if (!validateMCPConnection(tool.server_label)) {
+        console.warn(`MCP Warning: ${getMCPErrorMessage(tool.server_label)}`);
+      }
+    }
 
     if (stream) {
       // Streaming response using Responses API
@@ -351,6 +348,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         { error: 'Rate limit exceeded. Please wait a moment and try again.' },
         { status: 429 }
+      );
+    }
+
+    // Handle MCP-specific errors
+    if (error.message?.includes('mcp') || error.message?.includes('MCP')) {
+      console.error('MCP Connection Error:', error.message);
+      return NextResponse.json(
+        { 
+          error: 'MCP server connection failed. Some tools may be unavailable.',
+          details: error.message,
+          suggestion: 'Check /api/mcp/test for connection status'
+        },
+        { status: 503 }
+      );
+    }
+
+    // Handle tool-specific errors
+    if (error.message?.includes('tool')) {
+      return NextResponse.json(
+        { 
+          error: 'Tool execution failed',
+          details: error.message 
+        },
+        { status: 500 }
       );
     }
 
