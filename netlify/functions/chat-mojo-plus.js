@@ -139,8 +139,11 @@ exports.handler = async (event, context) => {
       {
         type: "mcp",
         server_label: "exa",
-        server_url: `https://mcp.exa.ai/mcp?exaApiKey=${process.env.EXA_API_KEY}`,
-        require_approval: "never"
+        server_url: "https://mcp.exa.ai/mcp",
+        require_approval: "never",
+        env: {
+          EXA_API_KEY: process.env.EXA_API_KEY
+        }
       },
       // Remote Context7 MCP Server
       {
@@ -161,7 +164,7 @@ exports.handler = async (event, context) => {
         effort: 'high',
         summary: 'auto' // auto gives you the best available summary (detailed > auto > None)
       },
-      temperature: 0.7, // Lower temperature for more consistent reasoning
+      // Note: O3 model doesn't support temperature parameter
       max_output_tokens: 4000,
     };
 
