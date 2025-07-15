@@ -212,8 +212,8 @@ exports.handler = async (event, context) => {
     // Configure tools for image generation, code interpreter, and remote MCP servers
     const tools = [
       {
-        type: "image_generation",
-        partial_images: 1 // Required for streaming
+        type: "image_generation"
+        // Note: partial_images only works with streaming, removed for non-streaming Netlify functions
       },
       {
         type: "code_interpreter",
