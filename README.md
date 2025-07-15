@@ -82,19 +82,41 @@ curl http://localhost:3000/api/mcp/test
 
 ## Deployment
 
-### Vercel Deployment
+### Netlify Deployment (Recommended)
+
+1. **Quick Deploy**: Connect your GitHub repo to Netlify
+2. **Build Settings**: 
+   - Build command: `npm run build`
+   - Publish directory: `.next`
+   - Functions directory: `netlify/functions`
+3. **Environment Variables**: Set in Netlify dashboard
+4. **Deploy**: Automatic deployment on git push
+
+```bash
+# Or deploy via CLI
+npm run netlify:deploy:prod
+```
+
+### Vercel Deployment (Alternative)
 
 1. Connect your GitHub repository to Vercel
-2. Set environment variables in Vercel dashboard:
-   - `OPENAI_API_KEY`
-   - `EXA_API_KEY`
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
-3. Deploy
+2. Set environment variables in Vercel dashboard
+3. Deploy automatically on git push
+
+```bash
+# Or deploy via CLI
+npm run deploy
+```
 
 ### Environment Variables for Production
 
-Make sure all environment variables are set in your production environment. The app will warn you about missing MCP connections but will continue to work with available tools.
+Required for both platforms:
+- `OPENAI_API_KEY`
+- `EXA_API_KEY` 
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
 
 ## Troubleshooting
 

@@ -1,179 +1,290 @@
-# sixtyoneeighty Chat - Deployment Guide
+# Deployment Guide
 
-## Vercel Deployment
+This guide covers deploying your AI chatbot with MCP integration to both Netlify and Vercel.
+
+## 🚀 Netlify Deployment (Recommended)
+
+Netlify offers excellent support for Next.js apps with serverless functions and is often more reliable for complex API integrations.
 
 ### Prerequisites
-1. Vercel account
-2. GitHub repository with your code
-3. Environment variables ready
+
+1. **Netlify Account**: Sign up at [netlify.com](https://netlify.com)
+2. **Netlify CLI**: Already installed as dev dependency
+3. **Environment Variables**: Have your API keys ready
 
 ### Quick Deploy
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/sixtyoneeighty-chat)
+#### Option 1: Git Integration (Recommended)
 
-### Manual Deployment
+1. **Push to GitHub**:
+```bash
+git add .
+git commit -m "Add Netlify deployment configuration"
+git push origin main
+```
 
-1. **Install Vercel CLI**
-   ```bash
-   npm i -g vercel
-   ```
+2. **Connect to Netlify**:
+   - Go to [Netlify Dashboard](https://app.netlify.com)
+   - Click "New site from Git"
+   - Choose your repository
+   - Configure build settings:
+     - **Build command**: `npm run build`
+     - **Publish directory**: `.next`
+     - **Functions directory**: `netlify/functions`
 
-2. **Login to Vercel**
-   ```bash
-   vercel login
-   ```
+3. **Set Environment Variables**:
+   - Go to Site Settings → Environment Variables
+   - Add these variables:
+```env
+OPENAI_API_KEY=your_openai_api_key_here
+EXA_API_KEY=your_exa_api_key_here
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_url_here
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key_here
+```
 
-3. **Deploy**
-   ```bash
-   npm run deploy
-   ```
+4. **Deploy**: Netlify will automatically build and deploy your site
+
+#### Option 2: CLI Deploy
+
+1. **Login to Netlify**:
+```bash
+npx netlify login
+```
+
+2. **Initialize Site**:
+```bash
+npx netlify init
+```
+
+3. **Set Environment Variables**:
+```bash
+npx netlify env:set OPENAI_API_KEY "your_openai_api_key_here"
+npx netlify env:set EXA_API_KEY "your_exa_api_key_here"
+npx netlify env:set NEXT_PUBLIC_SUPABASE_URL "your_supabase_url_here"
+npx netlify env:set NEXT_PUBLIC_SUPABASE_ANON_KEY "your_supabase_anon_key_here"
+```
+
+4. **Deploy**:
+```bash
+npm run netlify:deploy:prod
+```
+
+### Netlify-Specific Features
+
+#### API Endpoints
+Your API routes are automatically converted to Netlify Functions:
+- `https://your-site.netlify.app/.netlify/functions/chat-mojo`
+- `https://your-site.netlify.app/.netlify/functions/mcp-test`
+
+#### Testing Netlify Functions Locally
+```bash
+npm run netlify:dev
+```
+
+This starts a local development server that mimics Netlify's environment.
+
+### Netlify Configuration
+
+The `netlify.toml` file configures:
+- **Build settings**: Node.js version, build command
+- **Redirects**: API routes to functions
+- **Headers**: Security and caching headers
+- **Environment**: Production settings
+
+## 🔷 Vercel Deployment (Alternative)
+
+Vercel is the original platform for Next.js and offers excellent performance.
+
+### Quick Deploy
+
+1. **Install Vercel CLI**:
+```bash
+npm install -g vercel
+```
+
+2. **Login**:
+```bash
+vercel login
+```
+
+3. **Deploy**:
+```bash
+npm run deploy
+```
+
+4. **Set Environment Variables**:
+   - Go to [Vercel Dashboard](https://vercel.com/dashboard)
+   - Select your project → Settings → Environment Variables
+   - Add the same environment variables as above
+
+### Vercel-Specific Configuration
+
+The `vercel.json` file handles:
+- Function configuration
+- Build settings
+- Environment variables
+
+## 🧪 Testing Your Deployment
+
+### After Deployment
+
+1. **Test MCP Connections**:
+```bash
+# For Netlify
+curl https://your-site.netlify.app/.netlify/functions/mcp-test
+
+# For Vercel  
+curl https://your-site.vercel.app/api/mcp/test
+```
+
+2. **Test Chat API**:
+```bash
+# For Netlify
+curl -X POST https://your-site.netlify.app/.netlify/functions/chat-mojo \
+  -H "Content-Type: application/json" \
+  -d '{"messages":[{"role":"user","content":"Hello, search for recent AI news"}]}'
+
+# For Vercel
+curl -X POST https://your-site.vercel.app/api/chat/mojo \
+  -H "Content-Type: application/json" \
+  -d '{"messages":[{"role":"user","content":"Hello, search for recent AI news"}]}'
+```
+
+3. **Check Frontend**:
+   - Visit your deployed site
+   - Test the chat interface
+   - Verify MCP tools are working
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+#### Environment Variables Not Set
+**Symptoms**: API errors, missing configuration
+**Solution**: 
+- Double-check all environment variables are set in your platform's dashboard
+- Redeploy after setting variables
+
+#### Function Timeout
+**Symptoms**: 504 Gateway Timeout errors
+**Solution**:
+- **Netlify**: Functions timeout after 10 seconds (26 seconds for Pro)
+- **Vercel**: Functions timeout after 10 seconds (Hobby), 60 seconds (Pro)
+- Optimize MCP calls or upgrade plan
+
+#### CORS Issues
+**Symptoms**: Browser console errors about CORS
+**Solution**: 
+- Check that CORS headers are properly set in function responses
+- Verify your domain is correctly configured
+
+#### MCP Server Connection Failures
+**Symptoms**: Tools not working, connection errors
+**Solution**:
+- Test MCP endpoints directly: `/mcp-test` or `/api/mcp/test`
+- Verify API keys are correctly set
+- Check server logs for detailed errors
+
+### Platform-Specific Issues
+
+#### Netlify Issues
+- **Build failures**: Check build logs in Netlify dashboard
+- **Function errors**: Check function logs in Netlify dashboard
+- **Redirects not working**: Verify `netlify.toml` configuration
+
+#### Vercel Issues
+- **Edge runtime errors**: Consider switching to Node.js runtime
+- **Import errors**: Ensure all dependencies are properly installed
+- **API route issues**: Check file structure matches Vercel conventions
+
+## 📊 Monitoring and Analytics
+
+### Netlify Analytics
+- Enable Netlify Analytics in site settings
+- Monitor function invocations and errors
+- Track performance metrics
+
+### Vercel Analytics
+- Enable Vercel Analytics in project settings
+- Monitor function performance
+- Track user interactions
+
+### Custom Monitoring
+Add logging to track MCP usage:
+```javascript
+console.log('MCP Tool Used:', {
+  tool: toolName,
+  server: serverLabel,
+  success: !error,
+  timestamp: new Date().toISOString()
+});
+```
+
+## 🚀 Performance Optimization
+
+### Netlify Optimizations
+- Enable asset optimization in build settings
+- Use Netlify's CDN for static assets
+- Configure caching headers in `netlify.toml`
+
+### Vercel Optimizations
+- Enable Edge Functions for better performance
+- Use Vercel's Image Optimization
+- Configure ISR (Incremental Static Regeneration) where appropriate
+
+### General Optimizations
+- Minimize function cold starts
+- Cache MCP tool definitions
+- Optimize bundle size
+- Use compression for API responses
+
+## 🔐 Security Considerations
 
 ### Environment Variables
+- Never commit API keys to version control
+- Use different keys for development and production
+- Regularly rotate API keys
 
-Set these environment variables in your Vercel dashboard:
+### Function Security
+- Validate all inputs
+- Implement rate limiting
+- Use HTTPS only
+- Set appropriate CORS headers
 
-#### Required Variables
-```
-OPENAI_API_KEY=your_openai_api_key
-EXA_API_KEY=your_exa_api_key
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-SUPABASE_JWT_SECRET=your_supabase_jwt_secret
-SUPABASE_ACCESS_TOKEN=your_supabase_access_token
-POSTGRES_URL=your_postgres_url
-POSTGRES_PRISMA_URL=your_postgres_prisma_url
-POSTGRES_URL_NON_POOLING=your_postgres_url_non_pooling
-POSTGRES_USER=your_postgres_user
-POSTGRES_HOST=your_postgres_host
-POSTGRES_PASSWORD=your_postgres_password
-POSTGRES_DATABASE=your_postgres_database
-```
+### MCP Security
+- Only connect to trusted MCP servers
+- Monitor MCP tool usage
+- Implement approval workflows for sensitive operations
 
-#### Optional Variables e
-```
-NEXT_PUBLIC_APP_NAME=sixtyoneeighty
-NEXT_PUBLIC_APP_URL=https://your-domain.vercel.app
-```
+## 📈 Scaling Considerations
 
-### Build Configuration
+### Traffic Growth
+- Monitor function invocation limits
+- Consider upgrading to paid plans for higher limits
+- Implement caching strategies
 
-The project includes:
-- `vercel.json` - Vercel configuration
-- `next.config.ts` - Next.js configuration
-- `eslint.config.mjs` - ESLint configuration for deployment
+### Cost Management
+- Monitor API usage and costs
+- Set up billing alerts
+- Optimize function execution time
 
-### Troubleshooting
+### Performance Monitoring
+- Track response times
+- Monitor error rates
+- Set up alerting for issues
 
-#### 404 Errors
-- Ensure all pages have proper exports
-- Check that dynamic routes are correctly named
-- Verify API routes are in the correct directory structure
+## 🆘 Getting Help
 
-#### Build Failures
-- Run `npm run build` locally to check for errors
-- Fix TypeScript errors before deploying
-- Ensure all dependencies are in package.json
+### Platform Support
+- **Netlify**: [Netlify Support](https://www.netlify.com/support/)
+- **Vercel**: [Vercel Support](https://vercel.com/support)
 
-#### Environment Variable Issues
-- Double-check variable names match exactly
-- Ensure sensitive variables are not in public environment
-- Use NEXT_PUBLIC_ prefix only for client-side variables
+### Community Resources
+- **Netlify Community**: [community.netlify.com](https://community.netlify.com)
+- **Vercel Community**: [github.com/vercel/vercel/discussions](https://github.com/vercel/vercel/discussions)
 
-### Post-Deployment
-
-1. **Test Authentication**
-   - Sign up/sign in functionality
-   - User session persistence
-
-2. **Test Chat Functionality**
-   - Create new chats
-   - Send messages
-   - File uploads (if configured)
-
-3. **Test API Routes**
-   - `/api/chat/mojo` - GPT-4.1 endpoint
-   - `/api/chat/mojo-plus` - O3 endpoint
-   - `/api/mcp/tools` - MCP tools endpoint
-
-### Performance Optimization
-
-1. **Enable Edge Runtime** (optional)
-   ```typescript
-   export const runtime = 'edge'
-   ```
-
-2. **Configure Caching**
-   - API responses
-   - Static assets
-   - Database queries
-
-3. **Monitor Performance**
-   - Vercel Analytics
-   - Core Web Vitals
-   - API response times
-
-### Security Checklist
-
-- [ ] Environment variables are secure
-- [ ] API keys are not exposed in client code
-- [ ] Supabase RLS policies are enabled
-- [ ] CORS is properly configured
-- [ ] Rate limiting is implemented
-
-### Scaling Considerations
-
-1. **Database**
-   - Monitor Supabase usage
-   - Consider connection pooling
-   - Optimize queries
-
-2. **API Limits**
-   - OpenAI API rate limits
-   - Exa API quotas
-   - Implement proper error handling
-
-3. **Storage**
-   - Supabase Storage for file uploads
-   - CDN for static assets
-
-### Support
-
-For deployment issues:
-1. Check Vercel deployment logs
-2. Review browser console for client errors
-3. Monitor API endpoint responses
-4. Check Supabase logs for database issues
-
-### Custom Domain (Optional)
-
-1. Add domain in Vercel dashboard
-2. Configure DNS records
-3. Update NEXT_PUBLIC_APP_URL
-4. Test SSL certificate
-
----
-
-## Alternative Deployment Options
-
-### Netlify
-1. Connect GitHub repository
-2. Set build command: `npm run build`
-3. Set publish directory: `.next`
-4. Add environment variables
-
-### Railway
-1. Connect GitHub repository
-2. Add environment variables
-3. Deploy automatically on push
-
-### Self-Hosted
-1. Build the application: `npm run build`
-2. Start the server: `npm start`
-3. Configure reverse proxy (nginx/Apache)
-4. Set up SSL certificate
-5. Configure environment variables
-
----
-
-**Note**: This application requires Node.js 18+ and modern browser support for optimal performance.
+### Debugging Tools
+- Platform-specific logs and analytics
+- Browser developer tools
+- MCP test endpoints
+- Local development environments
