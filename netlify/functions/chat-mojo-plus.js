@@ -139,11 +139,8 @@ exports.handler = async (event, context) => {
       {
         type: "mcp",
         server_label: "exa",
-        server_url: "https://mcp.exa.ai/mcp",
-        require_approval: "never",
-        headers: {
-          "Authorization": `Bearer ${process.env.EXA_API_KEY}`
-        }
+        server_url: `https://mcp.exa.ai/mcp?exaApiKey=${process.env.EXA_API_KEY}`,
+        require_approval: "never"
       },
       // Remote Context7 MCP Server
       {
