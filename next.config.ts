@@ -30,10 +30,7 @@ const nextConfig: NextConfig = {
     unoptimized: true, // For Vercel deployment
   },
 
-  // Enable detailed error messages
-  devIndicators: {
-    buildActivity: true,
-  },
+  // Remove deprecated devIndicators.buildActivity
 
   // ESLint configuration for build
   eslint: {

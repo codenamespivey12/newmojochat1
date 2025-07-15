@@ -27,6 +27,8 @@ export default function RootLayout({
         <meta name="viewport" content="initial-scale=1, width=device-width" />
         <title>sixtyoneeighty - AI Chat Interface</title>
         <meta name="description" content="Modern AI chat interface with GPT-4.1 and O3 models" />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="alternate icon" href="/favicon.svg" />
       </head>
       <body>
         <AppRouterCacheProvider>
